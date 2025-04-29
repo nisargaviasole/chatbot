@@ -26,7 +26,7 @@ function App() {
     setIsTyping(true);
 
     try {
-      const response = await axios.post("http://127.0.0.1:9000/chat", {
+      const response = await axios.post("https://mcpai.gleeze.com/chat/chat", {
         message: userInput,
       });
 
