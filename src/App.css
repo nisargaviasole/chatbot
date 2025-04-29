@@ -5,6 +5,7 @@
   background: linear-gradient(135deg, #f9f9f9, #e0e0e0);
   padding: 10px;
   box-sizing: border-box;
+  max-height: 100vh;
 }
 
 .chat-box {
@@ -16,6 +17,7 @@
   gap: 10px;
   scrollbar-width: thin;
   scrollbar-color: #888 #e0e0e0;
+  flex-grow: 1;
 }
 
 /* Custom scrollbar for better aesthetics */

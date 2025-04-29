@@ -1,29 +1,37 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import "./App.css";
 
 function App() {
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState("");
-  const [isTyping, setIsTyping] = useState(false); // New typing state
+  const [isTyping, setIsTyping] = useState(false);
+
+  const chatEndRef = useRef(null); // <-- Create a ref
+
+  const scrollToBottom = () => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isTyping]); // <-- Scroll whenever messages or typing indicator change
 
   const sendMessage = async () => {
     if (!userInput.trim()) return;
 
-    // Add user message to chat
     setMessages((prev) => [...prev, { role: "user", text: userInput }]);
-    setUserInput(""); // <-- Clear input immediately
+    setUserInput("");
 
-    setIsTyping(true); // Show typing...
+    setIsTyping(true);
 
     try {
-      const response = await axios.post("https://mcpai.gleeze.com/chat/chat", {
+      const response = await axios.post("http://127.0.0.1:9000/chat", {
         message: userInput,
       });
 
       const aiResponse = response.data.response;
 
-      // Add AI response to chat
       setMessages((prev) => [...prev, { role: "assistant", text: aiResponse }]);
     } catch (error) {
       console.error(error);
@@ -32,7 +40,7 @@ function App() {
         { role: "assistant", text: "Sorry, something went wrong." },
       ]);
     } finally {
-      setIsTyping(false); // Remove typing whether success or error
+      setIsTyping(false);
     }
   };
 
@@ -59,6 +67,8 @@ function App() {
             <span className="dot"></span>
           </div>
         )}
+
+        <div ref={chatEndRef} /> {/* Marker for scroll */}
       </div>
 
       <div className="input-box">
