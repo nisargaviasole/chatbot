@@ -37,7 +37,7 @@ function App() {
     setIsTyping(true);
 
     try {
-      const response = await axios.post("https://mcpai.gleeze.com/chat/chat", {
+      const response = await axios.post("https://mcpcllient.gleeze.com/chat", {
         message: userInput,
         session_id: localStorage.getItem("session_id")
       });
