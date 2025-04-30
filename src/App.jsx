@@ -17,6 +17,12 @@ function App() {
     scrollToBottom();
   }, [messages, isTyping]); // <-- Scroll whenever messages or typing indicator change
 
+  useEffect(() => {
+    if (!localStorage.getItem("session_id")) {
+      localStorage.setItem("session_id", crypto.randomUUID());
+    }
+  }, []);
+
   const sendMessage = async () => {
     if (!userInput.trim()) return;
 
@@ -28,8 +34,8 @@ function App() {
     try {
       const response = await axios.post("https://mcpai.gleeze.com/chat/chat", {
         message: userInput,
+        session_id: localStorage.getItem("session_id")
       });
-
       const aiResponse = response.data.response;
 
       setMessages((prev) => [...prev, { role: "assistant", text: aiResponse }]);
@@ -37,19 +43,12 @@ function App() {
       console.error(error);
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", text: "Sorry, something went wrong." },
+        { role: "assistant", text: "Sorry, something went wrong." }
       ]);
     } finally {
       setIsTyping(false);
     }
   };
-
-  window.addEventListener("beforeunload", async () => {
-    await fetch("https://mcpai.gleeze.com/clear_session", {
-      method: "GET",
-      credentials: "include", // Include cookies
-    });
-  });
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") sendMessage();
@@ -61,12 +60,13 @@ function App() {
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={`chat-message ${msg.role === "user" ? "user" : "assistant"}`}
+            className={`chat-message ${
+              msg.role === "user" ? "user" : "assistant"
+            }`}
           >
             {msg.text}
           </div>
         ))}
-
         {isTyping && (
           <div className="chat-message assistant typing">
             <span className="dot"></span>
@@ -74,7 +74,6 @@ function App() {
             <span className="dot"></span>
           </div>
         )}
-
         <div ref={chatEndRef} /> {/* Marker for scroll */}
       </div>
 
