@@ -18,8 +18,13 @@ function App() {
   }, [messages, isTyping]); // <-- Scroll whenever messages or typing indicator change
 
   useEffect(() => {
-    if (!localStorage.getItem("session_id")) {
-      localStorage.setItem("session_id", crypto.randomUUID());
+    const existing = localStorage.getItem("session_id");
+    if (!existing) {
+      const newId = crypto.randomUUID();
+      localStorage.setItem("session_id", newId);
+      console.log("Generated new session ID:", newId);
+    } else {
+      console.log("Found existing session ID:", existing);
     }
   }, []);
 
