@@ -45,7 +45,7 @@ function App() {
   };
 
   window.addEventListener("beforeunload", async () => {
-    await fetch("http://127.0.0.1:9000/clear_session", {
+    await fetch("https://mcpai.gleeze.com/clear_session", {
       method: "GET",
       credentials: "include", // Include cookies
     });
