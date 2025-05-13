@@ -1,70 +1,32 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import "./App.css";
+import "./Agno.css";
 
-function App() {
+function Agno() {
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
 
-  const chatEndRef = useRef(null); // <-- Create a ref
-  const recognitionRef = useRef(null);
+  const chatEndRef = useRef(null); // Create a ref
   const scrollToBottom = () => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, isTyping]); // <-- Scroll whenever messages or typing indicator change
+  }, [messages, isTyping]); // Scroll whenever messages or typing indicator change
 
-  useEffect(() => {
-    const SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (SpeechRecognition) {
-      const recognition = new SpeechRecognition();
-      recognition.lang = "en-US";
-      recognition.interimResults = false;
-      recognition.maxAlternatives = 1;
+  const sendMessage = async () => {
+    if (!userInput.trim()) return;
 
-      recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        console.log("Recognized speech:", transcript);
-        sendMessage(transcript);
-      };
-
-      recognition.onerror = (event) => {
-        console.error("Speech recognition error:", event.error);
-      };
-
-      recognitionRef.current = recognition;
-    } else {
-      alert("Speech recognition not supported in this browser.");
-    }
-  }, []);
-
-  useEffect(() => {
-    const existing = localStorage.getItem("session_id");
-    if (!existing) {
-      const newId = crypto.randomUUID();
-      localStorage.setItem("session_id", newId);
-      console.log("Generated new session ID:", newId);
-    } else {
-      console.log("Found existing session ID:", existing);
-    }
-  }, []);
-
-  const sendMessage = async (message = userInput) => {
-    if (!message.trim()) return;
-
-    setMessages((prev) => [...prev, { role: "user", text: message }]);
-    setUserInput(""); // Clear input only if typed
+    setMessages((prev) => [...prev, { role: "user", text: userInput }]);
+    setUserInput(""); // Clear input
 
     setIsTyping(true);
 
     try {
-      const response = await axios.post("https://mcpcllient.gleeze.com/chat", {
-        message: userInput,
-        session_id: localStorage.getItem("session_id")
+      const response = await axios.post("http://127.0.0.1:8003/process", {
+        text: userInput
       });
       const aiResponse = response.data.response;
 
@@ -116,12 +78,9 @@ function App() {
           onKeyPress={handleKeyPress}
         />
         <button onClick={sendMessage}>Send</button>
-        <button onClick={() => recognitionRef.current?.start()} title="Speak">
-          🎤
-        </button>
       </div>
     </div>
   );
 }
 
-export default App;
+export default Agno;
