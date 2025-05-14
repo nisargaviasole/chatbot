@@ -25,7 +25,7 @@ function Agno() {
     setIsTyping(true);
 
     try {
-      const response = await axios.post("http://127.0.0.1:8003/process", {
+      const response = await axios.post("https://mcpagno.gleeze.com/process", {
         text: userInput
       });
       const aiResponse = response.data.response;
