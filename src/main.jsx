@@ -10,7 +10,7 @@ createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
-        <Route path="/agno" element={<Agno />} />
+        <Route path="/agentchat" element={<Agno />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,
